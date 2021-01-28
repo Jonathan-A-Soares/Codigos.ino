@@ -1,2 +1,2 @@
 # Codigos feito para arduino 
--São testes nem todo podem esta funcionado
+-São testes nem todos podem esta funcionado
