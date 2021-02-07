@@ -45,13 +45,13 @@ void grava()
 
   // if the file is available, write to it:
   if (dataFile) {
-    dataFile.println("")
+    dataFile.println("");
     dataFile.println("Latitude: "); dataFile.println(tinyGPS.location.lat(), 6);
     dataFile.print("Longitude: "); dataFile.println(tinyGPS.location.lng(), 6);
     dataFile.print("Hora: "); dataFile.print(tinyGPS.time.hour() - 3); dataFile.print(":"); dataFile.println(tinyGPS.time.minute());
     dataFile.print("Data: "); dataFile.println(tinyGPS.date.value()); // Raw date in DDMMYY
-    dataFile.print("Velocidade: "); dataFile.print(gps.speed.mps()); dataFile.println(" Kmph")
-    dataFile.println("")
+    dataFile.print("Velocidade: "); dataFile.print(tinyGPS.speed.mps()); dataFile.println(" Kmph");
+    dataFile.println("");
     dataFile.close();
 
   }
