@@ -100,10 +100,10 @@ void loop()
          delay(100);                                 // Pequena pausa
          Serial.print (F("AT+CMGS=\""));             // command to send sms
          Serial.print (number);                      // Definimos o número do destinatário em formato internacional
-         delay(100);                                 // Pequena pausa
-         Serial.print("Olá Mundo!");                 // Definimos o corpo da mensagem
-         delay(500);                                 // Pequena pausa
-         Serial.print(char(26));  
+         Serial.print (F("\"\r"));       
+         Serial.print (tinyGPS.location.lng(), 6);
+         Serial.print ("\r");                            
+         Serial.print (char(26));  
 
         
       }
