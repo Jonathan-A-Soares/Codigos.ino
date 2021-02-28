@@ -8,6 +8,8 @@
 #define ARDUINO_GPS_RX 2 // GPS TX, Arduino RX pin
 #define ARDUINO_GPS_TX 3 // GPS RX, Arduino TX pin
 #define gpsPort ssGPS  // Alternatively, use Serial1 on the Leonardo
+#define RX_PIN 10
+#define TX_PIN 9  
 #define GPS_BAUD 9600
 /*
       PINOUT:
@@ -21,6 +23,7 @@
 SoftwareSerial ssGPS(ARDUINO_GPS_TX, ARDUINO_GPS_RX); // Create a SoftwareSerial
 TinyGPSPlus tinyGPS; // Create a TinyGPSPlus object
 Sim800l Sim800l;
+SoftwareSerial SI(RX_PIN,TX_PIN);
 String textSms, numberSms;
 char* number , text  ;
 bool error;
@@ -98,25 +101,14 @@ void loop()
         Serial.println("Opçao 1");
         error = Sim800l.sendSms(number, "Aki");
 
-                   Serial.print (F("AT+CMGF=1\r")); //set sms to text mode  
-              _buffer = _readSerial();
-              Serial.print (F("AT+CMGS=\""));  // command to send sms
-              Serial.print (number);           
-              Serial.print(F("\"\r"));       
-              _buffer = _readSerial(); 
-              Serial.print ("ola");
-              Serial.print ("\r"); 
-           //change delay 100 to readserial  
-              _buffer=_readSerial();
-              Serial.print((char)26);
-              _buffer=_readSerial();
-              //expect CMGS:xxx   , where xxx is a number,for the sending sms.
-              if (((_buffer.indexOf("CMGS") ) != -1 ) ){
-                return true;
-              }
-              else {
-                return false;
-              } 
+              SI.print (F("AT+CMGF=1\r")); //set sms to text mode  
+              SI.print (F("AT+CMGS=\""));  // command to send sms
+              SI.print (number);           
+              SI.print(F("\"\r"));       
+              SI.print ("ola");
+              SI.print ("\r"); 
+              SI.print((char)26);
+
 
         
       }
