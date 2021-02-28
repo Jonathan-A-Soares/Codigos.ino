@@ -13,7 +13,6 @@
 #define GPS_BAUD 9600
 /*
       PINOUT:
-
           GND          >>>   GND
           RX  9       >>>   TX
           TX  10        >>>   RX
@@ -23,13 +22,12 @@
 SoftwareSerial ssGPS(ARDUINO_GPS_TX, ARDUINO_GPS_RX); // Create a SoftwareSerial
 TinyGPSPlus tinyGPS; // Create a TinyGPSPlus object
 Sim800l Sim800l;
-SoftwareSerial SI(RX_PIN,TX_PIN);
+
 String textSms, numberSms;
 char* number , text  ;
 bool error;
 
-String _buffer;
-String _readSerial();
+
 void setup()
 {
   //GPS
@@ -38,8 +36,9 @@ void setup()
   Serial.begin(9600);
 
 
- _buffer.reserve(255);
+
   //sms
+  text= "oi";
   Serial.begin(9600);
   Sim800l.begin();
   Serial.print("Limpando SMS antigos...");
@@ -77,7 +76,7 @@ void printInfo()
 }
 void loop()
 {
-
+  printInfo();
   textSms = Sim800l.readSms(1);
 
   if (textSms.indexOf("OK") != -1)
@@ -89,55 +88,25 @@ void loop()
       Serial.println(numberSms);
       textSms.toUpperCase();
 
-
-
       numberSms.toCharArray(number, 20);
-
-
-
 
       if (textSms.indexOf("KDTU") != -1)
       {
         Serial.println("Opçao 1");
-        error = Sim800l.sendSms(number, "Aki");
-
-              SI.print (F("AT+CMGF=1\r")); //set sms to text mode  
-              SI.print (F("AT+CMGS=\""));  // command to send sms
-              SI.print (number);           
-              SI.print(F("\"\r"));       
-              SI.print ("ola");
-              SI.print ("\r"); 
-              SI.print((char)26);
 
 
         
-      }
-
-      else if (textSms.indexOf("CORTE") != -1)
-      {
-        Serial.println("Opçao 2");
-        error = Sim800l.sendSms(number, "cortou");
-      }
-      else if (textSms.indexOf("OFFALARME") != -1)
-      {
-        Serial.println("Opçao 3");
-        error = Sim800l.sendSms(number, "Alarme Desligado");
-      }
-      else if (textSms.indexOf("ONALARME") != -1)
-      {
-        Serial.println("Opçao 4");
-        error = Sim800l.sendSms(number, "Alarme Ligado");
-      }
-      else if (textSms.indexOf("DISPARAR") != -1)
-      {
+        float lattt = tinyGPS.location.lat();
+        float lottt = tinyGPS.location.lng();
+        error = Sim800l.sendSms(number,lattt ); //latitude
+        error = Sim800l.sendSms(number,lottt );//longitude
 
 
-        Serial.println("Opçao 5");
-        error = Sim800l.sendSms(number, "cortou");
-        error = Sim800l.sendSms(number, "Aki");
-        error = Sim800l.sendSms(number, text);
+        
 
       }
+
+   
 
 
       Sim800l.delAllSms();
