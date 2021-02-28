@@ -13,22 +13,46 @@ TinyGPSPlus tinyGPS; // Create a TinyGPSPlus object
 Sim800l Sim800l;
 
 
-float lat, lon, vel;                                                                                
-unsigned long data, hora;                                                                     
-unsigned short sat;                                                                          
+
+/*
+sim800l 
+tx >>> 10
+rx >>> 9
+reset >>> 7
+vcc >>> 4.7v
+
+gps
+rx >>> 5
+tx >>> 4
+vcc >>> 5v
+
+
+
+
+*/
+
+
+
+
+
+
+float lat, lon, vel;
+unsigned long data, hora;
+unsigned short sat;
 String textSms, numberSms;
 char* number , text  ;
 bool error;
 
 void setup()
 {
+ 
   //GPS
   analogReference(DEFAULT);
   gpsPort.begin(GPS_BAUD);
   SerialMonitor.begin(9600);
-  
-  //sms
-  text= "oi";
+  smartDelay(1000);
+   //sms
+  text = "oi";
   Serial.begin(9600);
   Sim800l.begin();
   Serial.print("Limpando SMS antigos...");
@@ -36,18 +60,26 @@ void setup()
   Serial.println(" Apagados!");
   Serial.println("\nAguardando comandos por SMS...");
   number = "35000000000";
+
+
 }
 
 
 void loop()
 {
-  
-  printInfo();
-  smartDelay(1000);
-  textSms = Sim800l.readSms(1);
 
+  
+  ResSms();
+  printInfo();
+
+}
+void ResSms() {
+
+  textSms = Sim800l.readSms(1);
+ 
   if (textSms.indexOf("OK") != -1)
   {
+   
     if (textSms.length() > 7)
     {
       numberSms = Sim800l.getNumberSms(1);
@@ -62,26 +94,24 @@ void loop()
         Serial.println("Opçao 1");
 
 
-        
+
         float lattt = tinyGPS.location.lat();
         float lottt = tinyGPS.location.lng();
-        error = Sim800l.sendSms(number,lattt ); //latitude
-        error = Sim800l.sendSms(number,lottt );//longitude
+        error = Sim800l.sendSms(number, lattt ); //latitude
+        error = Sim800l.sendSms(number, lottt ); //longitude
 
 
         
 
       }
 
-   
+
 
 
       Sim800l.delAllSms();
     }
   }
-  
 }
-
 void printInfo()
 {
   //====================================== Localização ======================================
@@ -90,14 +120,14 @@ void printInfo()
   SerialMonitor.print("Alt: "); SerialMonitor.println(tinyGPS.altitude.meters());
   SerialMonitor.print("Speed: "); SerialMonitor.println(tinyGPS.speed.kmph());
   SerialMonitor.print("Sats: "); SerialMonitor.println(tinyGPS.satellites.value());
-  
+
   //====================================== Data ======================================
   SerialMonitor.print(tinyGPS.date.day());
   SerialMonitor.print("/");
   SerialMonitor.print(tinyGPS.date.month());
   SerialMonitor.print("/");
   SerialMonitor.println(tinyGPS.date.year());
-  
+
   //====================================== Hora ======================================
   SerialMonitor.print(tinyGPS.time.hour());
   SerialMonitor.print(":");
