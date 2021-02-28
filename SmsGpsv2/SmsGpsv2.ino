@@ -24,6 +24,9 @@ Sim800l Sim800l;
 String textSms, numberSms;
 char* number , text  ;
 bool error;
+
+String _buffer;
+String _readSerial();
 void setup()
 {
   //GPS
@@ -32,8 +35,7 @@ void setup()
   Serial.begin(9600);
 
 
-
-
+ _buffer.reserve(255);
   //sms
   Serial.begin(9600);
   Sim800l.begin();
@@ -96,14 +98,25 @@ void loop()
         Serial.println("Opçao 1");
         error = Sim800l.sendSms(number, "Aki");
 
-         Serial.println("AT+CMGF=1");                // Activamos a função de envio de SMS
-         delay(100);                                 // Pequena pausa
-         Serial.print (F("AT+CMGS=\""));             // command to send sms
-         Serial.print (number);                      // Definimos o número do destinatário em formato internacional
-         Serial.print (F("\"\r"));       
-         Serial.print (tinyGPS.location.lng(), 6);
-         Serial.print ("\r");                            
-         Serial.print (char(26));  
+                   Serial.print (F("AT+CMGF=1\r")); //set sms to text mode  
+              _buffer = _readSerial();
+              Serial.print (F("AT+CMGS=\""));  // command to send sms
+              Serial.print (number);           
+              Serial.print(F("\"\r"));       
+              _buffer = _readSerial(); 
+              Serial.print ("ola");
+              Serial.print ("\r"); 
+           //change delay 100 to readserial  
+              _buffer=_readSerial();
+              Serial.print((char)26);
+              _buffer=_readSerial();
+              //expect CMGS:xxx   , where xxx is a number,for the sending sms.
+              if (((_buffer.indexOf("CMGS") ) != -1 ) ){
+                return true;
+              }
+              else {
+                return false;
+              } 
 
         
       }
